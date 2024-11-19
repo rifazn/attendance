@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attendance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        table {
+            width: 80%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #summaryReport {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Attendance Records</h1>
+
+<div>
+    <h3>Upload Attendance File</h3>
+    <input type="file" id="fileInput" accept=".csv, .xlsx">
+    <button onclick="uploadFile()">Upload</button>
+</div>
+
+<div class="form-container">
+    <label for="employeeDropdown">Select Employee:</label>
+    <select id="employeeDropdown">
+        <option value="">--Select Employee--</option>
+    </select>
+
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate">
+
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate">
+
+    <button onclick="fetchAttendance()">Get Attendance</button>
+</div>
+
+<!-- Attendance Table -->
+<table id="attendanceTable" style="display: none;">
+    <thead>
+        <tr>
+            <th>SL</th>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Late (Y/N)</th>
+            <th>Absent (Y/N)</th>
+        </tr>
+    </thead>
+    <tbody id="attendanceTableBody"></tbody>
+</table>
+
+<!-- Summary Report -->
+<div id="summaryReport">
+    <h3>Summary Report</h3>
+    <p>Employee Name: <span id="employeeName"></span></p>
+    <p>Total Late: <span id="totalLate"></span></p>
+    <p>Total Absent: <span id="totalAbsent"></span></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<!-- Link to external JavaScript file -->
+<script src="rahat.js"></script>
+
+</body>
+</html>
