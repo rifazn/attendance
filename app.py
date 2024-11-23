@@ -13,8 +13,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    df = pd.read_excel(DB)
-    current_data = df[FIELDS_FE].to_json()
+    current_data = jsonify({})
+    if os.path.isfile(DB):
+        df = pd.read_excel(DB)
+        current_data = df[FIELDS_FE].to_json()
     return render_template('index.html', current_data=current_data)
 
 @app.route("/upload-attendance", methods=["POST"])
