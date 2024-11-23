@@ -39,22 +39,30 @@
             display: none;
         }
     </style>
+		<script>
+			current_data = {{ current_data|safe }}
+		</script>
 </head>
 <body>
 
 <h1>Attendance Records</h1>
 
-<div>
-    <h3>Upload Attendance File</h3>
-    <input type="file" id="fileInput" accept=".csv, .xlsx">
-    <button onclick="uploadFile()">Upload</button>
-</div>
+<h3>Upload Attendance File</h3>
+<form
+    name="file-upload-form"
+    method="POST"
+    enctype="multipart/form-data"
+    action="upload-attendance">
+    <input type="file" name="file-upload">
+    <button type="submit">Upload</button>
+</form>
 
 <div class="form-container">
     <label for="employeeDropdown">Select Employee:</label>
-    <select id="employeeDropdown">
+		<input list="employeeDropdown" name="employeeChoice">
+    <datalist id="employeeDropdown">
         <option value="">--Select Employee--</option>
-    </select>
+    </datalist>
 
     <label for="startDate">Start Date:</label>
     <input type="date" id="startDate">
@@ -91,7 +99,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
 <!-- Link to external JavaScript file -->
-<script src="rahat.js"></script>
+<script src="static/scripts/attendance-upload.js"></script>
 
 </body>
 </html>
