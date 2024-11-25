@@ -25,7 +25,8 @@ fileUploadForm.addEventListener('submit', (ev) => {
             const sumry = document.querySelector('#summaryReport')
             sumry.style = 'display: block;'
             sumry.innerText = data.message
-            console.log('Success:', data); // Handle success
+            console.log('Success:', data);
+
         })
         .catch(error => {
             console.error('Error:', error); // Handle error
