@@ -120,7 +120,7 @@
 				results = current_data.filter(record => {
 					const dateInRange = new Date(record['Date']) >= new Date(startDate) && new Date(record['Date']) <= new Date(endDate)
 
-					if (record['Name'] == employeeName && dateInRange)
+					if ( (employeeName.length == 0 || record['Name'] == employeeName) && dateInRange)
 						return true
 
 					return false
