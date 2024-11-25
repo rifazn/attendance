@@ -15,6 +15,9 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     current_data = jsonify({})
+    names = []
+    min_max_date = ('1970-01-01', '1970-01-01')
+
     if os.path.isfile(DB):
         # Get the full DB
         df = pd.read_excel(DB)
