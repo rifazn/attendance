@@ -1,105 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Attendance</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-        }
-        h1 {
-            color: #333;
-        }
-        .form-container {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        table {
-            width: 80%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        #summaryReport {
-            margin-top: 20px;
-            display: none;
-        }
-    </style>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Employee Attendance</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+			}
+			h1 {
+				color: #333;
+			}
+			.form-container {
+				margin-top: 20px;
+				display: flex;
+				gap: 10px;
+			}
+			table {
+				width: 80%;
+				margin-top: 20px;
+				border-collapse: collapse;
+			}
+			table, th, td {
+				border: 1px solid #ddd;
+			}
+			th, td {
+				padding: 10px;
+				text-align: left;
+			}
+			th {
+				background-color: #f4f4f4;
+			}
+			#summaryReport {
+				margin-top: 20px;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+
+		<h1>Attendance Records</h1>
+
+		<h3>Upload Attendance File</h3>
+		<form
+				name="file-upload-form"
+				method="POST"
+				enctype="multipart/form-data"
+				action="upload-attendance">
+			<input type="file" name="file-upload">
+			<button type="submit">Upload</button>
+		</form>
+
+		<div class="form-container">
+			<label for="employeeDropdown">Select Employee:</label>
+			<input list="employeeDropdown" name="employeeChoice">
+			<datalist id="employeeDropdown">
+				<option value="">--Select Employee--</option>
+				{% for name in names %}
+				<option value="{{ name }}">{{ name }}</option>
+				{% endfor %}
+			</datalist>
+
+			<label for="startDate">Start Date:</label>
+			<input type="date" id="startDate"
+					value="{{ min_max_date[0] }}"
+					min="{{ min_max_date[0] }}" max="{{ min_max_date[1] }}">
+
+			<label for="endDate">End Date:</label>
+			<input type="date" id="endDate"
+					value="{{ min_max_date[1] }}"
+					min="{{ min_max_date[0] }}" max="{{ min_max_date[1] }}">
+
+			<button onclick="fetchAttendance()">Get Attendance</button>
+		</div>
+
+		<!-- Attendance Table -->
+		<table id="attendanceTable" style="display: none;">
+			<thead>
+				<tr>
+					<th>SL</th>
+					<th>Name</th>
+					<th>Date</th>
+					<th>Day</th>
+					<th>Clock In</th>
+					<th>Clock Out</th>
+					<th>Absent (Y/N)</th>
+				</tr>
+			</thead>
+			<tbody id="attendanceTableBody"></tbody>
+		</table>
+
+		<!-- Summary Report -->
+		<div id="summaryReport">
+			<h3>Summary Report</h3>
+			<p>Employee Name: <span id="employeeName"></span></p>
+			<p>Total Late: <span id="totalLate"></span></p>
+			<p>Total Absent: <span id="totalAbsent"></span></p>
+		</div>
+
+		<script src="static/scripts/attendance-upload.js"></script>
 		<script>
-			current_data = {{ current_data|safe }}
+			const current_data = {{ current_data|safe }};
+			let chosenData = {};
+			let results = [];
+			
+			function fetchAttendance() {
+				const employeeName = document.querySelector('[name=employeeChoice]').value
+				const startDate = document.querySelector('#startDate').value
+				const endDate = document.querySelector('#endDate').value
+
+				chosenData['employeeName'] = employeeName
+				chosenData['startDate'] = startDate
+				chosenData['endDate'] = endDate
+				console.table(chosenData)
+
+				results = current_data.filter(record => {
+					const dateInRange = new Date(record['Date']) >= new Date(startDate) && new Date(record['Date']) <= new Date(endDate)
+
+					if ( (employeeName.length == 0 || record['Name'] == employeeName) && dateInRange)
+						return true
+
+					return false
+				})
+				console.table(results)
+
+				populateAttendanceTable(results)
+			}
+
+			function populateAttendanceTable(data) {
+				const tableBody = document.getElementById('attendanceTableBody');
+				tableBody.innerHTML = ''; // Clear existing rows
+
+				data.forEach((item, index) => {
+					const row = document.createElement('tr');
+
+					// Create cells for each column
+					const slCell = document.createElement('td');
+					slCell.textContent = index + 1; // Serial number
+					row.appendChild(slCell);
+
+					const nameCell = document.createElement('td');
+					nameCell.textContent = item.Name;
+					row.appendChild(nameCell);
+
+					const dateCell = document.createElement('td');
+					dateCell.textContent = item.Date;
+					row.appendChild(dateCell);
+
+					const dayCell = document.createElement('td');
+					const date = new Date(item.Date);
+					const options = { weekday: 'long' }; // Get the day of the week
+					dayCell.textContent = date.toLocaleDateString('en-US', options);
+					row.appendChild(dayCell);
+
+					const clockInCell = document.createElement('td');
+					clockInCell.textContent = item["Clock In"] || 'N/A'; // Display 'N/A' if null
+					row.appendChild(clockInCell);
+
+					const clockOutCell = document.createElement('td');
+					clockOutCell.textContent = item["Clock Out"] || 'N/A'; // Display 'N/A' if null
+					row.appendChild(clockOutCell);
+
+					const absentCell = document.createElement('td');
+					absentCell.textContent = (item["Clock In"] === null && item["Clock Out"] === null) ? 'Y' : 'N'; // Determine if absent
+					row.appendChild(absentCell);
+
+					// Append the row to the table body
+					tableBody.appendChild(row);
+				});
+
+				// Show the table
+				document.getElementById('attendanceTable').style.display = 'table';
+			}
+
 		</script>
-</head>
-<body>
 
-<h1>Attendance Records</h1>
-
-<h3>Upload Attendance File</h3>
-<form
-    name="file-upload-form"
-    method="POST"
-    enctype="multipart/form-data"
-    action="upload-attendance">
-    <input type="file" name="file-upload">
-    <button type="submit">Upload</button>
-</form>
-
-<div class="form-container">
-    <label for="employeeDropdown">Select Employee:</label>
-		<input list="employeeDropdown" name="employeeChoice">
-    <datalist id="employeeDropdown">
-        <option value="">--Select Employee--</option>
-    </datalist>
-
-    <label for="startDate">Start Date:</label>
-    <input type="date" id="startDate">
-
-    <label for="endDate">End Date:</label>
-    <input type="date" id="endDate">
-
-    <button onclick="fetchAttendance()">Get Attendance</button>
-</div>
-
-<!-- Attendance Table -->
-<table id="attendanceTable" style="display: none;">
-    <thead>
-        <tr>
-            <th>SL</th>
-            <th>Date</th>
-            <th>Day</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Late (Y/N)</th>
-            <th>Absent (Y/N)</th>
-        </tr>
-    </thead>
-    <tbody id="attendanceTableBody"></tbody>
-</table>
-
-<!-- Summary Report -->
-<div id="summaryReport">
-    <h3>Summary Report</h3>
-    <p>Employee Name: <span id="employeeName"></span></p>
-    <p>Total Late: <span id="totalLate"></span></p>
-    <p>Total Absent: <span id="totalAbsent"></span></p>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-<!-- Link to external JavaScript file -->
-<script src="static/scripts/attendance-upload.js"></script>
-
-</body>
+	</body>
 </html>
