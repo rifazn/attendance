@@ -1,6 +1,5 @@
 const fileInput = document.querySelector('[name=file-upload]')
 const fileUploadForm = document.querySelector('[name=file-upload-form]')
-console.log(fileUploadForm)
 
 fileUploadForm.addEventListener('submit', (ev) => {
     ev.preventDefault();
