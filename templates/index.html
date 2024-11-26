@@ -260,7 +260,10 @@
 					if (row['Absent']) totalAbsent++
 				}
 				uniqueNames = [...new Set(allNames)]
-				employeeNameElem.innerText = uniqueNames.join(', ')
+				if (uniqueNames.length > 1)
+					employeeNameElem.innerText = '<Multiple Users Selected>'
+				else
+					employeeNameElem.innerText = uniqueNames.join(', ')
 				totalLateElem.innerText = totalLate
 				totalAbsentElem.innerText = totalAbsent
 
