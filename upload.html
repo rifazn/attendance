@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Attendance</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+      .logo-container {
+        margin-top: 10px;
+      }
+      .logo {
+        width: 300px; /* Adjust width as needed */
+        height: auto;
+      }
+      h1 {
+        color: #333;
+      }
+      .form-container {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      input[type="file"] {
+        padding: 10px;
+        margin-right: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo-container">
+      <img src="C:\Users\RahatAnowar\Downloads\floratelecom.jpg" alt="FLORA TELECOM LIMITED" class="logo" />
+    </div>
+
+    <h1>Upload Attendance File</h1>
+    
+    <form name="file-upload-form" method="POST" enctype="multipart/form-data" action="upload-attendance">
+      <input type="file" name="file-upload" />
+      <button type="submit">Upload</button>
+    </form>
+
+    <div class="form-container">
+      <a href="report.html">
+        <button>Go to Attendance Report</button>
+      </a>
+    </div>
+  </body>
+</html>
