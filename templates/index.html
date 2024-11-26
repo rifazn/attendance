@@ -10,9 +10,19 @@
 				display: flex;
 				align-items: center;
 				flex-direction: column;
+				position: relative;
+			}
+			.logo-container {
+				margin-top: 10px;
+				text-align: center; /* Keep logo centered normally */
+			}
+			.logo {
+				width: 300px;
+				height: auto;
 			}
 			h1 {
 				color: #333;
+				text-align: center; /* Keep title centered normally */
 			}
 			.form-container {
 				margin-top: 20px;
@@ -24,10 +34,13 @@
 				margin-top: 20px;
 				border-collapse: collapse;
 			}
-			table, th, td {
+			table,
+			th,
+			td {
 				border: 1px solid #ddd;
 			}
-			th, td {
+			th,
+			td {
 				padding: 10px;
 				text-align: left;
 			}
@@ -35,11 +48,62 @@
 				background-color: #f4f4f4;
 			}
 			#summaryReport {
-				margin-top: 20px;
-				display: none;
+				position: absolute;
+				top: 20px;
+				right: 20px;
+				padding: 10px;
+				border: 1px solid #ddd;
+				background-color: #f9f9f9;
+				width: 250px;
+				display: block;
 			}
-		</style>
-	</head>
+			button {
+				padding: 10px 20px;
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				cursor: pointer;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+			.action-buttons {
+				margin-top: 20px;
+				display: flex;
+				gap: 10px;
+			}
+				/* For Print Styling */
+				@media print {
+					body {
+						display: block; /* Reset the flexbox layout for print */
+						text-align: left; /* Align all content to the left */
+					}
+					.logo-container, h1 {
+						text-align: left; /* Align logo and title to the left when printing */
+					}
+					#summaryReport {
+						position: relative;
+						top: 0;
+						right: 0;
+						width: auto;
+						margin-left: 10px;
+						margin-top: 20px;
+					}
+					table {
+						width: 100%; /* Make the table take up the full width when printing */
+					}
+					.action-buttons {
+						display: none; /* Hide action buttons on print */
+					}
+					.form-container {
+						display: none; /* Hide the "Back to Upload" button on print */
+					}
+					button {
+						display: none; /* Hide buttons when printing */
+					}
+				}
+				</style>
+			</head>
 	<body>
 
 		<h1>Attendance Records</h1>
@@ -74,7 +138,7 @@
 					value="{{ min_max_date[1] }}"
 					min="{{ min_max_date[0] }}" max="{{ min_max_date[1] }}">
 
-			<button onclick="fetchAttendance()">Get Attendance</button>
+			<button onclick="fetchAttendance();">Get Attendance</button>
 		</div>
 
 		<!-- Attendance Table -->
@@ -128,6 +192,7 @@
 				console.table(results)
 
 				populateAttendanceTable(results)
+				updateReport(results)
 			}
 
 			function populateAttendanceTable(data) {
@@ -176,6 +241,28 @@
 				document.getElementById('attendanceTable').style.display = 'table';
 			}
 
+			function updateReport(data) {
+				const employeeNameElem = document.querySelector('#employeeName')
+				const totalLateElem = document.querySelector('#totalLate')
+				const totalAbsentElem = document.querySelector('#totalAbsent')
+				
+				console.log('Hello report data.')
+				console.table(data)
+
+				const allNames = []
+				let totalLate = 0
+				let totalAbsent = 0
+
+				for (let row of data) {
+					allNames.push(row['Name'])
+					if (row['Late']) totalLate++
+					if (row['Absent']) totalAbsent++
+				}
+				uniqueNames = [...new Set(allNames)]
+				employeeNameElem.innerText = uniqueNames.join(', ')
+				totalLateElem.innerText = totalLate
+				totalAbsentElem.innerText = totalAbsent
+			}
 		</script>
 
 	</body>

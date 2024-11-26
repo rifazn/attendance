@@ -7,7 +7,7 @@ import os, tempfile
 # implied xlrd installed
 
 DB = os.path.join('media', 'attendance.xlsx')
-FIELDS_FE = ['Emp No.', 'AC-No.', 'Name', 'Date', 'Clock In', 'Clock Out']
+FIELDS_FE = ['Emp No.', 'AC-No.', 'Name', 'Date', 'Late', 'Clock In', 'Clock Out', 'Absent']
 
 app = Flask(__name__)
 
