@@ -35,5 +35,3 @@ fileUploadForm.addEventListener('submit', (ev) => {
         console.error('No file selected.');
     }
 })
-
-console.log('hello world')
