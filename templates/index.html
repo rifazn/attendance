@@ -158,7 +158,7 @@
 		</table>
 
 		<!-- Summary Report -->
-		<div id="summaryReport">
+		<div id="summaryReport" style="display: none;">
 			<h3>Summary Report</h3>
 			<p>Employee Name: <span id="employeeName"></span></p>
 			<p>Total Late: <span id="totalLate"></span></p>
@@ -193,6 +193,7 @@
 
 				populateAttendanceTable(results)
 				updateReport(results)
+				document.querySelector('#summaryReport').style = 'display: block;'
 			}
 
 			function populateAttendanceTable(data) {
@@ -262,6 +263,8 @@
 				employeeNameElem.innerText = uniqueNames.join(', ')
 				totalLateElem.innerText = totalLate
 				totalAbsentElem.innerText = totalAbsent
+
+				document.querySelector('#summaryReport').style = 'display: block;'
 			}
 		</script>
 
