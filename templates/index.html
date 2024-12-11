@@ -102,15 +102,22 @@
 					button {
 						display: none; /* Hide buttons when printing */
 					}
+					.print-hide {
+						display: none;
+					}
 				}
 				</style>
 			</head>
 	<body>
+		<div class="logo-container">
+			<img alt="Flora Telecom Ltd. Logo" width="480" src="static/images/ftl-logo.jpg">
+		</div>
 
 		<h1>Attendance Records</h1>
 
-		<h3>Upload Attendance File</h3>
+		<h3 class="print-hide">Upload Attendance File</h3>
 		<form
+				class="print-hide"
 				name="file-upload-form"
 				method="POST"
 				enctype="multipart/form-data"
