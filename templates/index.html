@@ -46,6 +46,7 @@
 			}
 			th {
 				background-color: #f4f4f4;
+				text-align: center;
 			}
 			#summaryReport {
 				position: absolute;
@@ -151,6 +152,7 @@
 					<th>Day</th>
 					<th>Clock In</th>
 					<th>Clock Out</th>
+					<th>Late (Y/N)</th>
 					<th>Absent (Y/N)</th>
 				</tr>
 			</thead>
@@ -161,13 +163,16 @@
 		<div id="summaryReport" style="display: none;">
 			<h3>Summary Report</h3>
 			<p>Employee Name: <span id="employeeName"></span></p>
-			<p>Total Late: <span id="totalLate"></span></p>
+			<p>Total Workdays: <span id="totalWorkdays"></span></p>
 			<p>Total Absent: <span id="totalAbsent"></span></p>
+			<p>Total Late: <span id="totalLate"></span></p>
 		</div>
 
 		<script src="static/scripts/attendance-upload.js"></script>
 		<script>
 			const current_data = {{ current_data|safe }};
+			const daysUTC = ['sunday', 'monday', 'tuesday', 'thursday', 'friday', 'saturday'];
+			const weekends = ['friday'];
 			let chosenData = {};
 			let results = [];
 			
@@ -182,9 +187,14 @@
 				console.table(chosenData)
 
 				results = current_data.filter(record => {
-					const dateInRange = new Date(record['Date']) >= new Date(startDate) && new Date(record['Date']) <= new Date(endDate)
+					const currentDate = new Date(record['Date'])
+					const currentDay = daysUTC[currentDate.getUTCDay()]
 
-					if ( (employeeName.length == 0 || record['Name'] == employeeName) && dateInRange)
+					const notWeekend = !weekends.includes(currentDay)
+
+					const dateInRange = currentDate >= new Date(startDate) && currentDate <= new Date(endDate)
+
+					if ( (employeeName.length == 0 || record['Name'] == employeeName) && dateInRange && notWeekend)
 						return true
 
 					return false
@@ -205,6 +215,7 @@
 
 					// Create cells for each column
 					const slCell = document.createElement('td');
+					slCell.style = "text-align: center;"
 					slCell.textContent = index + 1; // Serial number
 					row.appendChild(slCell);
 
@@ -230,7 +241,13 @@
 					clockOutCell.textContent = item["Clock Out"] || 'N/A'; // Display 'N/A' if null
 					row.appendChild(clockOutCell);
 
+					const lateCell = document.createElement('td');
+					lateCell.style = "text-align: center;"
+					lateCell.textContent = (item["Late"] === null) ? 'N' : 'Y'; // Determine if late
+					row.appendChild(lateCell);
+
 					const absentCell = document.createElement('td');
+					absentCell.style = "text-align: center;"
 					absentCell.textContent = (item["Clock In"] === null && item["Clock Out"] === null) ? 'Y' : 'N'; // Determine if absent
 					row.appendChild(absentCell);
 
@@ -246,8 +263,10 @@
 				const employeeNameElem = document.querySelector('#employeeName')
 				const totalLateElem = document.querySelector('#totalLate')
 				const totalAbsentElem = document.querySelector('#totalAbsent')
+				const totalWorkdaysElem = document.querySelector('#totalWorkdays')
+				const totalWorkDays = data.length
+				const workDaysSuffixString = " <span style='color: blue;'>/</span> " + totalWorkDays
 				
-				console.log('Hello report data.')
 				console.table(data)
 
 				const allNames = []
@@ -264,8 +283,10 @@
 					employeeNameElem.innerText = '<Multiple Users Selected>'
 				else
 					employeeNameElem.innerText = uniqueNames.join(', ')
-				totalLateElem.innerText = totalLate
+
+				totalWorkdays.innerText = totalWorkDays
 				totalAbsentElem.innerText = totalAbsent
+				totalLateElem.innerText = totalLate
 
 				document.querySelector('#summaryReport').style = 'display: block;'
 			}
